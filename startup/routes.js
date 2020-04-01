@@ -2,7 +2,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 //import routes
-const testRoutes = require("../routes/test");
+const testRoutes = require("../routes/auth");
 
 /**
  * will handle errors globally passed as last route
