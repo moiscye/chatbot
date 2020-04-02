@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+//will handle the async error globally
+require("express-async-errors");
 
 require("./startup/routes")(app);
 require("./startup/db")();
