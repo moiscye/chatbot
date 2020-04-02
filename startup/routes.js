@@ -3,6 +3,7 @@ const cors = require("cors");
 
 //import routes
 const testRoutes = require("../routes/auth");
+const dialogFlowRoutes = require("../routes/dialogFlow");
 
 /**
  * will handle errors globally passed as last route
@@ -17,6 +18,6 @@ module.exports = app => {
 
   //routes middleware
   app.use("/api", testRoutes);
-
+  app.use("/api", dialogFlowRoutes);
   app.use(error);
 };
