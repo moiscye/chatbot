@@ -7,29 +7,32 @@ const keys = require("../config/keys");
 const projectID = keys.googleProjectID;
 const credentials = {
   client_email: keys.googleClientEmail,
-  private_key: keys.googlePrivateKey
+  private_key: keys.googlePrivateKey,
 };
 
 // Create a new session
 const sessionClient = new dialogflow.SessionsClient({ projectID, credentials });
-const sessionPath = sessionClient.sessionPath(keys.googleProjectID, keys.dialogFlowSessionID);
 
 module.exports = {
-  textQuery: async function(text, parameters = {}) {
+  textQuery: async function (text, userID, parameters = {}) {
     let self = module.exports;
+    const sessionPath = sessionClient.sessionPath(
+      keys.googleProjectID,
+      keys.dialogFlowSessionID + userID
+    );
     const request = {
       session: sessionPath,
       queryInput: {
         text: {
           text,
-          languageCode: keys.dialogFlowSessionLanguageCode
-        }
+          languageCode: keys.dialogFlowSessionLanguageCode,
+        },
       },
       queryParams: {
         payload: {
-          data: parameters
-        }
-      }
+          data: parameters,
+        },
+      },
     };
 
     // Send request and log result
@@ -37,17 +40,21 @@ module.exports = {
     responses = await self.handleAction(responses);
     return responses;
   },
-  eventQuery: async function(event, parameters = {}) {
+  eventQuery: async function (event, userID, parameters = {}) {
     let self = module.exports;
+    const sessionPath = sessionClient.sessionPath(
+      keys.googleProjectID,
+      keys.dialogFlowSessionID + userID
+    );
     const request = {
       session: sessionPath,
       queryInput: {
         event: {
           name: event,
           parameters: strucjson.jsonToStructProto(parameters),
-          languageCode: keys.dialogFlowSessionLanguageCode
-        }
-      }
+          languageCode: keys.dialogFlowSessionLanguageCode,
+        },
+      },
     };
 
     // Send request and log result
@@ -55,7 +62,7 @@ module.exports = {
     responses = await self.handleAction(responses);
     return responses;
   },
-  handleAction: async function(responses) {
+  handleAction: async function (responses) {
     return responses;
-  }
+  },
 };
