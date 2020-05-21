@@ -177,31 +177,6 @@ const LinkButton = styled(Link)`
   `}
 `;
 
-const Button = styled.a`
-  font-family: inherit;
-  font-size: 1.7rem;
-  font-weight: 300;
-  white-space: nowrap;
-  padding: 1rem 2rem;
-  background: transparent;
-  color: inherit;
-  border: none;
-  cursor: pointer;
-  outline: none;
-  border-radius: 4px;
-  transition: all 0.2s;
-
-  :hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: inherit;
-  }
-
-  :active {
-    background-color: rgba(255, 255, 255, 0.15);
-    color: inherit;
-  }
-`;
-
 const LabelUI = styled(Label)`
   transform: translateX(-2.3rem);
 

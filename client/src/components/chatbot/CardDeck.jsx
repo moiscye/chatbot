@@ -5,15 +5,14 @@ import CardBot from "./CardBot";
 const CardDeck = ({ cards }) => (
   <Segment
     style={{
-      height: 320,
-      width: 300,
+      height: 325,
+      width: 320,
       overflow: "hidden",
       position: "relative",
-
       padding: 1,
     }}
   >
-    <div style={{ height: 320, padding: 8, overflowX: "auto" }}>
+    <div style={{ height: 320, padding: 8, overflowX: "auto", marginLeft: 10 }}>
       <div style={{ width: 400, overflow: "hidden" }}>
         <Card.Group itemsPerRow={cards.length}>
           {cards && cards.map((v, i) => <CardBot key={i} values={v.structValue} />)}

@@ -1,6 +1,5 @@
 import React from "react";
 import { Card, Image, Header, Icon } from "semantic-ui-react";
-import { Link } from "react-router-dom";
 
 const CardBot = ({ values }) => (
   <Card style={{ marginLeft: 3 }}>
@@ -10,7 +9,7 @@ const CardBot = ({ values }) => (
       <Card.Description>{`AU$${values.fields.price.stringValue}`}</Card.Description>
     </Card.Content>
     <Card.Content textAlign="center" extra>
-      <a target="_blank" rel="noopener" href={values.fields.link.stringValue}>
+      <a target="_blank" rel="noopener noreferrer" href={values.fields.link.stringValue}>
         <Icon name="search plus" />
         See More
       </a>

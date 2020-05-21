@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Grid, Segment, Header } from "semantic-ui-react";
+import React from "react";
+import { Segment, Header } from "semantic-ui-react";
 import QuickReply from "./QuickReply";
 const buttonColors = [
   "red",

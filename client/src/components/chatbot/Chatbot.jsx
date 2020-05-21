@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+
 import axios from "axios";
 
-import { Comment, Form, Header, Input, Icon, Image, Segment, Card } from "semantic-ui-react";
+import { Comment, Form, Header, Input, Icon, Image, Segment } from "semantic-ui-react";
 import styled from "styled-components";
 import chatbotImage from "../../images/lazy.png";
 import { slideInUp, slideOutDown } from "../../utils/animations";
@@ -68,86 +69,82 @@ const CloseFrame = styled.div`
   cursor: pointer;
 `;
 
-const LeftArrow = styled(Icon)`
-  position: absolute;
-  left: 0.3rem;
-  top: 50%;
-  z-index: 1000;
-`;
-
-const RightArrow = styled(Icon)`
-  position: absolute;
-  right: 0.3rem;
-  top: 50%;
-  z-index: 1000;
-`;
-
-const Chatbot = ({ setShowBot, userID }) => {
+const Chatbot = ({ setShowBot, userID, setShowWelcomeMessage, showWelcomeMessage }) => {
   let scrollToLastMessage;
-  let scrollHorizontally;
+
   const didMount = useDidMount();
   const [inputRef, setInputFocus] = useFocus();
   const [userInput, setUserInput] = useState("Recommend");
   const [messageList, setMessageList] = useState([]);
   const [isClosing, setIsClosing] = useState(false);
-  const [displayLeft, setDisplayLeft] = useState(false);
-  const [displayRight, setDisplayRight] = useState(false);
 
   useEffect(() => {
     if (didMount) {
       scrollToLastMessage.scrollIntoView({ behaviour: "smooth" });
-      // console.log(messageList);
     } else {
-      df_event_query("Welcome");
+      df_event_query("WELCOME");
+      greetUserInShopPage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messageList]);
+
+  const greetUserInShopPage = async () => {
+    await pauseForXSeconds(1.5);
+    if (window.location.pathname === "/shop" && !showWelcomeMessage) {
+      df_event_query("SHOW_RECOMMENDATIONS");
+      setShowWelcomeMessage(true);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (userInput === "") return;
     let says = { user: "human", message: userInput };
-    await setMessageList((prev) => [...prev, says]);
+    setMessageList((prev) => [...prev, says]);
     setUserInput("");
     setInputFocus();
     df_text_query(userInput);
+  };
+  const pauseForXSeconds = (x = 1) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(x);
+      }, x * 1000);
+    });
   };
 
   const df_text_query = async (text) => {
     try {
       const res = await axios.post("api/df_text_query", { text, userID });
-      // console.log("ANWSER: ", res.data.fulfillmentMessages);
-
-      let messages = [];
-      let cards;
-      let quick_replies = {};
-      for (let msg of res.data.fulfillmentMessages) {
-        if (msg.text && msg.text.text) messages.push(msg.text.text[0]);
-        if (msg.payload && msg.payload.fields && msg.payload.fields.cards)
-          cards = msg.payload.fields.cards;
-        if (msg.payload && msg.payload.fields && msg.payload.fields.quick_replies)
-          quick_replies = {
-            ...quick_replies,
-            payload: msg.payload.fields.quick_replies,
-            text: msg.payload.fields.text,
-          };
-      }
-
-      let says = { user: "bot", message: messages, cards, quick_replies };
-      setMessageList((prev) => [...prev, says]);
+      assignDataToMessageList(res.data.fulfillmentMessages);
     } catch (e) {}
   };
 
   const df_event_query = async (event) => {
     try {
       const res = await axios.post("api/df_event_query", { event, userID });
-
-      let messages = [];
-      for (let msg of res.data.fulfillmentMessages) {
-        if (msg.text) messages.push(msg.text.text[0]);
-      }
-      let says = { user: "bot", message: messages };
-      setMessageList((prev) => [...prev, says]);
+      assignDataToMessageList(res.data.fulfillmentMessages);
     } catch (e) {}
+  };
+
+  const assignDataToMessageList = (data) => {
+    let messages = [];
+    let cards;
+    let quick_replies = {};
+    for (let msg of data) {
+      if (msg.text && msg.text.text) messages.push(msg.text.text[0]);
+      if (msg.payload && msg.payload.fields && msg.payload.fields.cards)
+        cards = msg.payload.fields.cards;
+      if (msg.payload && msg.payload.fields && msg.payload.fields.quick_replies)
+        quick_replies = {
+          ...quick_replies,
+          payload: msg.payload.fields.quick_replies,
+          text: msg.payload.fields.text,
+        };
+    }
+
+    let says = { user: "bot", message: messages, cards, quick_replies };
+    setMessageList((prev) => [...prev, says]);
   };
 
   const handleClose = () => {
