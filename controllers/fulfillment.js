@@ -11,6 +11,7 @@ exports.fulfillment = async (req, res) => {
 
   async function learn(agent) {
     let course = await Demand.findOne({ course: agent.parameters.courses });
+    console.log(agent.parameters.courses);
 
     if (course) {
       course.counter++;
@@ -20,11 +21,11 @@ exports.fulfillment = async (req, res) => {
       course.save();
     }
 
-    let responseText = `Since you want to learn about ${parameters.course}. Here is a link to all my courses: <a>http://www.moisescruz.me</a>`;
+    let responseText = `Since you want to learn about ${agent.parameters.course}. Here is a link to all my courses: <a>http://www.moisescruz.me</a>`;
 
-    let coupon = await Coupon.findOne({ course: parameters.courses });
+    let coupon = await Coupon.findOne({ course: agent.parameters.courses });
     if (coupon) {
-      responseText = `Since you want to learn about ${parameters.course}. Here is a link to the course you are looking for: <a>${coupon.link}</a>`;
+      responseText = `Since you want to learn about ${agent.parameters.course}. Here is a link to the course you are looking for: <a>${coupon.link}</a>`;
     }
     agent.add(responseText);
   }
