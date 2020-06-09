@@ -4,6 +4,6 @@ const router = express.Router();
 
 const { fulfillment } = require("../controllers/fulfullment");
 
-router.get("/fulfillment", fulfillment);
+router.post("/fulfillment", fulfillment);
 
 module.exports = router;
