@@ -4,13 +4,14 @@ const cors = require("cors");
 //import routes
 const testRoutes = require("../routes/auth");
 const dialogFlowRoutes = require("../routes/dialogFlow");
+const fulfillment = require("../routes/fulfillment");
 
 /**
  * will handle errors globally passed as last route
  */
 const error = require("../middlewares/error");
 
-module.exports = app => {
+module.exports = (app) => {
   //middlewares
 
   app.use(bodyParser.json());
@@ -19,5 +20,6 @@ module.exports = app => {
   //routes middleware
   app.use("/api", testRoutes);
   app.use("/api", dialogFlowRoutes);
+  app.use("/api", fulfillment);
   app.use(error);
 };
