@@ -5,14 +5,18 @@ const Coupon = require("../models/coupon");
 exports.fulfillment = async (req, res) => {
   const agent = new WebhookClient({ request: req, response: res });
 
-  async function learn({ parameters, add }) {
-    let course = await Demand.findOne({ course: parameters.courses });
+  function snoopy(agent) {
+    agent.add(`Welcome to my Snoopy fulfillment!`);
+  }
+
+  async function learn(agent) {
+    let course = await Demand.findOne({ course: agent.parameters.courses });
 
     if (!course) {
       course.counter++;
       course.save();
     } else {
-      course = new Demand({ course: parameters.courses });
+      course = new Demand({ course: agent.parameters.courses });
       course.save();
     }
 
@@ -22,7 +26,7 @@ exports.fulfillment = async (req, res) => {
     if (!coupon) {
       responseText = `Since you want to learn about ${parameters.course}. Here is a link to the course you are looking for: <a>${coupon.link}</a>`;
     }
-    add(responseText);
+    agent.add(responseText);
   }
 
   function fallback(agent) {
@@ -32,10 +36,9 @@ exports.fulfillment = async (req, res) => {
 
   let intentMap = new Map();
 
+  intentMap.set("snoopy", snoopy);
   intentMap.set("learn courses", learn);
-  intentMap.set("Defauult Fallback Intent", fallback);
+  intentMap.set("Default Fallback Intent", fallback);
 
   agent.handleRequest(intentMap);
-
-  res.send("welcome to fulfillment");
 };
