@@ -3,6 +3,7 @@
 const dialogflow = require("dialogflow");
 const strucjson = require("./strucjson");
 const keys = require("../config/keys");
+const Registration = require("../models/registration");
 
 const projectID = keys.googleProjectID;
 const credentials = {
@@ -59,10 +60,31 @@ module.exports = {
 
     // Send request and log result
     let responses = await sessionClient.detectIntent(request);
-    responses = await self.handleAction(responses);
+    responses = self.handleAction(responses);
     return responses;
   },
-  handleAction: async function (responses) {
+  handleAction: function (responses) {
+    let self = module.exports;
+    let queryResult = responses[0].queryResult;
+    switch (queryResult.action) {
+      case "recommendcourses-yes":
+        if (queryResult.allRequiredParamsPresent) {
+          self.saveRegistration(queryResult.parameters.fields);
+        }
+
+        break;
+    }
+
     return responses;
+  },
+  saveRegistration: async function (fields) {
+    let registration = new Registration({
+      name: fields.name.stringValue,
+      address: fields.address.stringValue,
+      phone: fields.phone.stringValue,
+      email: fields.email.stringValue,
+    });
+
+    registration = await registration.save();
   },
 };
