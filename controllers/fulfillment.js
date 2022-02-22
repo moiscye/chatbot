@@ -8,22 +8,23 @@ exports.fulfillment = async (req, res) => {
   function snoopy(agent) {
     agent.add(`Welcome to my Snoopy fulfillment!`);
   }
+  console.log("REQ:", req.body);
 
   async function learn(agent) {
     let course = await Demand.findOne({ course: agent.parameters.courses });
-    console.log(agent.parameters.courses);
+    console.log("AGENT:", agent.parameters);
 
     if (course) {
       course.counter++;
       course.save();
     } else {
-      course = new Demand({ course: agent.parameters.courses });
+      course = new Demand({ course: agent.parameters.course });
       course.save();
     }
 
     let responseText = `Since you want to learn about ${agent.parameters.course}. Here is a link to all my courses: <a>http://www.moisescruz.me</a>`;
 
-    let coupon = await Coupon.findOne({ course: agent.parameters.courses });
+    let coupon = await Coupon.findOne({ course: agent.parameters.course });
     if (coupon) {
       responseText = `Since you want to learn about ${agent.parameters.course}. Here is a link to the course you are looking for: <a>${coupon.link}</a>`;
     }
